@@ -1,8 +1,11 @@
 ﻿using Application.Services.Repositories;
+using Core.Persistance.Dynamic;
+using Core.Persistance.Paging;
 using Core.Persistance.Repositories;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Persistance.Contexts;
-
+using System.Linq.Expressions;
 
 namespace Persistance.Repositories
 {
@@ -12,5 +15,7 @@ namespace Persistance.Repositories
         public ProgrammingLanguageRepository(BaseDbContext context) : base(context)
         {
         }
+
+        
     }
 }
