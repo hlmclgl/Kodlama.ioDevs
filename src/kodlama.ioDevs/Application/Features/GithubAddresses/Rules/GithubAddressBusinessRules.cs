@@ -1,4 +1,5 @@
-﻿using Application.Services.Repositories;
+﻿using Application.Features.GithubAddresses.Constants;
+using Application.Services.Repositories;
 using Core.CrossCuttingConcerns.Exceptions;
 using Core.Persistance.Paging;
 using Domain.Entities;
@@ -22,12 +23,12 @@ namespace Application.Features.GithubAddresses.Rules
         public async Task GithubAddressCanNotBeDuplicatedWhenInserted(string githubUrl)
         {
             IPaginate<GithubAddress> result = await _githubAddressRepository.GetListAsync(g => g.GithubUrl == githubUrl);
-            if (result.Items.Any()) throw new BusinessException("Github account already exist.");
+            if (result.Items.Any()) throw new BusinessException(GithubAddressMessages.GithubAddressCanNotBeDuplicatedWhenInserted);
         }
 
         public void GithubAddressShouldExistWhenRequested(GithubAddress githubAddress)
         {
-            if (githubAddress == null) throw new BusinessException("Requested Github account does not exist.");
+            if (githubAddress == null) throw new BusinessException(GithubAddressMessages.GithubAddressShouldExistWhenRequested);
         }
     }
 }

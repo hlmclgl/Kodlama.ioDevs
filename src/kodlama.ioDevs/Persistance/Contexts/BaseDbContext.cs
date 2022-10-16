@@ -12,6 +12,9 @@ namespace Persistance.Contexts
         public DbSet<ProgrammingLanguageTechnology> ProgrammingLanguageTechnologies { get; set; }
         public DbSet<GithubAddress> GithubAddresses { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<OperationClaim> OperationClaims { get; set; }
+        public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
 
         public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration) : base(dbContextOptions)
@@ -54,19 +57,52 @@ namespace Persistance.Contexts
                 a.HasOne(p => p.User);
             });
 
-            modelBuilder.Entity<User>(a =>
+            modelBuilder.Entity<User>(p =>
             {
-                a.ToTable("Users").HasKey(k => k.Id);
-                a.Property(p => p.Id).HasColumnName("Id");
-                a.Property(p => p.FirstName).HasColumnName("FirstName");
-                a.Property(p => p.LastName).HasColumnName("LastName");
-                a.Property(p => p.Email).HasColumnName("Email");
-                a.Property(p => p.PasswordSalt).HasColumnName("PasswordSalt");
-                a.Property(p => p.PasswordHash).HasColumnName("PasswordHash");
-                a.Property(p => p.AuthenticatorType).HasColumnName("AuthenticatorType");
+                p.ToTable("Users").HasKey(u => u.Id);
+                p.Property(u => u.Id).HasColumnName("Id");
+                p.Property(u => u.FirstName).HasColumnName("FirstName");
+                p.Property(u => u.LastName).HasColumnName("LastName");
+                p.Property(u => u.Email).HasColumnName("Email");
+                p.Property(u => u.PasswordSalt).HasColumnName("PasswordSalt");
+                p.Property(u => u.PasswordHash).HasColumnName("PasswordHash");
+                p.Property(u => u.Status).HasColumnName("Status");
+                p.Property(u => u.AuthenticatorType).HasColumnName("AuthenticatorType");
+                p.HasMany(c => c.UserOperationClaims);
+                p.HasMany(c => c.RefreshTokens);
+            });
 
-                //a.HasMany(p => p.UserOperationClaims);
-                //a.HasMany(p => p.RefreshTokens);
+            modelBuilder.Entity<OperationClaim>(p =>
+            {
+                p.ToTable("OperationClaims").HasKey(o => o.Id);
+                p.Property(o => o.Id).HasColumnName("Id");
+                p.Property(o => o.Name).HasColumnName("Name");
+            });
+
+            modelBuilder.Entity<UserOperationClaim>(p =>
+            {
+                p.ToTable("UserOperationClaims").HasKey(u => u.Id);
+                p.Property(u => u.Id).HasColumnName("Id");
+                p.Property(u => u.UserId).HasColumnName("UserId");
+                p.Property(u => u.OperationClaimId).HasColumnName("OperationClaimId");
+                p.HasOne(u => u.User);
+                p.HasOne(u => u.OperationClaim);
+            });
+
+            modelBuilder.Entity<RefreshToken>(a =>
+            {
+                a.ToTable("RefreshTokens").HasKey(k => k.Id);
+                a.Property(p => p.Id).HasColumnName("Id");
+                a.Property(p => p.UserId).HasColumnName("UserId");
+                a.Property(p => p.Token).HasColumnName("Token");
+                a.Property(p => p.Expires).HasColumnName("Expires");
+                a.Property(p => p.Created).HasColumnName("Created");
+                a.Property(p => p.CreatedByIp).HasColumnName("CreatedByIp");
+                a.Property(p => p.Revoked).HasColumnName("Revoked");
+                a.Property(p => p.RevokedByIp).HasColumnName("RevokedByIp");
+                a.Property(p => p.ReplacedByToken).HasColumnName("ReplacedByToken");
+                a.Property(p => p.ReasonRevoked).HasColumnName("ReasonRevoked");
+                a.HasOne(p => p.User);
             });
 
             //data migration
